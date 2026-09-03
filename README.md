@@ -38,6 +38,8 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
   short debounce and inline validation instead of a manual Run button.
 - The WPF layout uses a compact task-focused grid, a persistent host-coordinate
   summary, and a side details panel to avoid excessive horizontal scrolling.
+- Reference changes run immediately, identify the selected reference row, and
+  show an active-reference timestamp so recalculation is visually explicit.
 
 ## Default audit logic
 
