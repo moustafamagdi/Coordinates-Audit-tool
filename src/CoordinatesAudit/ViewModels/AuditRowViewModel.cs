@@ -6,6 +6,7 @@ namespace CoordinatesAudit.ViewModels
     public sealed class AuditRowViewModel
     {
         public LinkInstanceData Link { get; set; }
+        public AuditComparisonResult Comparison { get; set; }
         public string Status { get; set; }
         public string Model => Link.LinkTypeName;
         public string Instance => Link.InstanceName;
@@ -22,6 +23,7 @@ namespace CoordinatesAudit.ViewModels
             return new AuditRowViewModel
             {
                 Link = link,
+                Comparison = comparison,
                 Status = comparison.Status,
                 InternalDelta = FormatDistance(comparison.InternalHorizontalMm, comparison.InternalVerticalMm),
                 ProjectBaseDelta = FormatDistance(comparison.ProjectBaseHorizontalMm, comparison.ProjectBaseVerticalMm),
