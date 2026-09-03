@@ -1,6 +1,9 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
+using CoordinatesAudit.Formatting;
+using CoordinatesAudit.Models;
+using CoordinatesAudit.Services;
 
 namespace CoordinatesAudit.Commands
 {
@@ -10,19 +13,37 @@ namespace CoordinatesAudit.Commands
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            string documentName = commandData.Application.ActiveUIDocument?.Document?.Title
-                                  ?? "No active project";
-            var dialog = new TaskDialog("Coordinate Auditor")
+            UIDocument uiDocument = commandData.Application.ActiveUIDocument;
+            if (uiDocument == null)
             {
-                MainInstruction = "Coordinate Auditor loaded successfully.",
-                MainContent = "Milestone 0 foundation is running correctly.\n\n" +
-                              $"Active document: {documentName}\n\n" +
-                              "No model data was changed.",
-                CommonButtons = TaskDialogCommonButtons.Close,
-                DefaultButton = TaskDialogResult.Close
-            };
-            dialog.Show();
-            return Result.Succeeded;
+                TaskDialog.Show("Coordinate Auditor", "Open a Revit project before running the audit.");
+                return Result.Cancelled;
+            }
+
+            try
+            {
+                var reader = new HostCoordinateReader();
+                HostCoordinateReport report = reader.Read(
+                    uiDocument.Document,
+                    commandData.Application.Application.VersionBuild);
+
+                var dialog = new TaskDialog("Coordinate Auditor - Host Model")
+                {
+                    MainInstruction = "Host model coordinate data",
+                    MainContent = $"Model: {report.ModelTitle}\nProject location: {report.ProjectLocationName}\nLength unit: {report.LengthUnit}",
+                    ExpandedContent = HostCoordinateReportFormatter.Format(report),
+                    CommonButtons = TaskDialogCommonButtons.Close,
+                    DefaultButton = TaskDialogResult.Close
+                };
+                dialog.Show();
+                return Result.Succeeded;
+            }
+            catch (System.Exception exception)
+            {
+                message = exception.Message;
+                TaskDialog.Show("Coordinate Auditor", "The host model could not be audited.\n\n" + exception.Message);
+                return Result.Failed;
+            }
         }
     }
 }
