@@ -34,6 +34,10 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
   Location, True North, PBP, Survey Point, and Internal Origin values.
 - Selecting the host row shows its complete coordinate details while link-only
   PASS/FAIL totals remain unchanged.
+- Comparison reruns automatically after reference or tolerance changes, with a
+  short debounce and inline validation instead of a manual Run button.
+- The WPF layout uses a compact task-focused grid, a persistent host-coordinate
+  summary, and a side details panel to avoid excessive horizontal scrolling.
 
 ## Default audit logic
 
