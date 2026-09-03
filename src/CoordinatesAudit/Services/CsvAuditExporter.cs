@@ -38,7 +38,7 @@ namespace CoordinatesAudit.Services
                 "Rotation Delta (deg)", "Reason", "Project Location", "Angle to True North",
                 "Total Translation", "Total Rotation", "Scale", "Mirrored");
 
-            foreach (AuditRowViewModel row in rows)
+            foreach (AuditRowViewModel row in rows.Where(item => item.Link != null))
             {
                 LinkInstanceData link = row.Link;
                 AuditComparisonResult result = row.Comparison;
