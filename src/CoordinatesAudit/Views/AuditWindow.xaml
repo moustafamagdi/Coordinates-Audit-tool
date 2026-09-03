@@ -70,14 +70,22 @@
                         <DataTrigger Binding="{Binding Status}" Value="WARNING"><Setter Property="Background" Value="#FFF7D6"/></DataTrigger>
                         <DataTrigger Binding="{Binding Status}" Value="FAIL"><Setter Property="Background" Value="#FFEBE6"/></DataTrigger>
                         <DataTrigger Binding="{Binding Status}" Value="UNAVAILABLE"><Setter Property="Background" Value="#EBECF0"/></DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="REFERENCE"><Setter Property="Background" Value="#DEEBFF"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="HOST"><Setter Property="Background" Value="#EAF2F8"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger>
                     </Style.Triggers>
                 </Style>
             </DataGrid.RowStyle>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="95"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding RowType}" Width="65"/>
                 <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="220"/>
                 <DataGridTextColumn Header="Instance" Binding="{Binding Instance}" Width="220"/>
                 <DataGridTextColumn Header="Loaded" Binding="{Binding Loaded}" Width="70"/>
+                <DataGridTextColumn Header="Project Location" Binding="{Binding ProjectLocation}" Width="160"/>
+                <DataGridTextColumn Header="True North" Binding="{Binding TrueNorth}" Width="90"/>
+                <DataGridTextColumn Header="Project Base Point" Binding="{Binding ProjectBasePoint}" Width="280"/>
+                <DataGridTextColumn Header="Survey Point" Binding="{Binding SurveyPoint}" Width="280"/>
+                <DataGridTextColumn Header="Internal Origin" Binding="{Binding InternalOrigin}" Width="240"/>
                 <DataGridTextColumn Header="Internal Origin Δ" Binding="{Binding InternalDelta}" Width="150"/>
                 <DataGridTextColumn Header="PBP Δ" Binding="{Binding ProjectBaseDelta}" Width="150"/>
                 <DataGridTextColumn Header="Survey Δ" Binding="{Binding SurveyDelta}" Width="150"/>
