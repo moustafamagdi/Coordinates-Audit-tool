@@ -51,7 +51,10 @@
                 <TextBox Grid.Column="5" x:Name="VerticalToleranceTextBox" Text="1" VerticalContentAlignment="Center"/>
                 <TextBlock Grid.Column="6" Text="Rotation (°)" VerticalAlignment="Center" Margin="16,0,8,0"/>
                 <TextBox Grid.Column="7" x:Name="AngularToleranceTextBox" Text="0.001" VerticalContentAlignment="Center"/>
-                <Button Grid.Column="9" Content="Run Comparison" Click="RunComparison_Click" Background="#0B6EBD" Foreground="White" BorderThickness="0"/>
+                <StackPanel Grid.Column="9" Orientation="Horizontal">
+                    <Button Content="Run Comparison" Click="RunComparison_Click" Background="#0B6EBD" Foreground="White" BorderThickness="0"/>
+                    <Button Content="Export CSV" Click="ExportCsv_Click"/>
+                </StackPanel>
             </Grid>
         </Border>
 
