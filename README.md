@@ -17,6 +17,8 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
   Base Point, Survey Point, Internal Origin, Project Location, and True North angle.
 - Coordinate data is cached per link type while every placed instance remains a
   separate result row.
+- Project Base Point values fall back to `BasePoint.Position` when Revit 2024
+  exposes an unset display parameter, avoiding false `Unavailable` results.
 - PowerShell development install and uninstall scripts.
 - Unloaded, missing, and inaccessible link documents remain visible with an explicit
   coordinate-read status instead of failing the complete audit.
