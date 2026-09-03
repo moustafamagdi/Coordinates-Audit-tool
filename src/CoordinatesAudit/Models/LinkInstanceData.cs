@@ -16,5 +16,7 @@ namespace CoordinatesAudit.Models
         public bool HasInstance { get; set; }
         public string CoordinateReadStatus { get; set; }
         public HostCoordinateReport CoordinateReport { get; set; }
+        public string TransformReadStatus { get; set; }
+        public LinkTransformData TransformData { get; set; }
     }
 }
