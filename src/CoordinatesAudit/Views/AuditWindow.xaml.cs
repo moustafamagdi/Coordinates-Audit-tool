@@ -78,17 +78,19 @@ namespace CoordinatesAudit.Views
             _lastAngularTolerance = angular;
 
             _rows.Clear();
+            _rows.Add(AuditRowViewModel.CreateHost(_host, reference.Id == "HOST"));
             foreach (LinkInstanceData link in _links)
             {
                 AuditComparisonResult result = _comparisonEngine.Compare(link, reference, horizontal, vertical, angular);
                 _rows.Add(AuditRowViewModel.Create(link, result));
             }
 
-            int pass = _rows.Count(row => row.Status == "PASS");
-            int warning = _rows.Count(row => row.Status == "WARNING");
-            int fail = _rows.Count(row => row.Status == "FAIL");
-            int unavailable = _rows.Count(row => row.Status == "UNAVAILABLE");
-            StatusSummaryText.Text = $"Total: {_rows.Count}   PASS: {pass}   WARNING: {warning}   FAIL: {fail}   UNAVAILABLE: {unavailable}";
+            IReadOnlyList<AuditRowViewModel> linkRows = _rows.Where(row => row.RowType == "Link").ToList();
+            int pass = linkRows.Count(row => row.Status == "PASS");
+            int warning = linkRows.Count(row => row.Status == "WARNING");
+            int fail = linkRows.Count(row => row.Status == "FAIL");
+            int unavailable = linkRows.Count(row => row.Status == "UNAVAILABLE");
+            StatusSummaryText.Text = $"Links: {linkRows.Count}   PASS: {pass}   WARNING: {warning}   FAIL: {fail}   UNAVAILABLE: {unavailable}";
             if (_rows.Count > 0) ResultsGrid.SelectedIndex = 0;
         }
 
