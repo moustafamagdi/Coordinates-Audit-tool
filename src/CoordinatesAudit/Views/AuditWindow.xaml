@@ -1,110 +1,179 @@
 <Window x:Class="CoordinatesAudit.Views.AuditWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Revit Coordinate Auditor" Height="720" Width="1260"
-        MinHeight="560" MinWidth="980" WindowStartupLocation="CenterOwner"
-        Background="#F4F6F8" FontFamily="Segoe UI">
+        Title="Revit Coordinate Auditor" Height="760" Width="1360"
+        MinHeight="620" MinWidth="1080" WindowStartupLocation="CenterOwner"
+        Background="#F5F7FA" FontFamily="Segoe UI" FontSize="12">
     <Window.Resources>
         <Style TargetType="Button">
-            <Setter Property="Padding" Value="16,7"/>
-            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="Margin" Value="6,0,0,0"/>
+            <Setter Property="MinHeight" Value="34"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8,5"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="MinHeight" Value="32"/>
         </Style>
         <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Background" Value="#E8EDF2"/>
+            <Setter Property="Background" Value="#E9EEF5"/>
+            <Setter Property="Foreground" Value="#172B4D"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Padding" Value="8"/>
+            <Setter Property="Padding" Value="9,8"/>
+            <Setter Property="BorderBrush" Value="#D7DEE8"/>
+            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+        </Style>
+        <Style x:Key="CardStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#DCE3EB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="Padding" Value="14"/>
         </Style>
     </Window.Resources>
-    <Grid Margin="16">
+    <Grid Margin="18">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="180"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="0,0,0,12">
-            <TextBlock Text="Coordinate Audit" FontSize="24" FontWeight="SemiBold" Foreground="#172B4D"/>
-            <TextBlock x:Name="ProjectSummaryText" Foreground="#5E6C84" Margin="0,4,0,0"/>
-            <TextBlock Text="Shared Coordinates mode: PBP and Internal Origin differences are informational; shared position, elevation, rotation, scale, and mirroring control PASS/FAIL."
-                       Foreground="#5E6C84" Margin="0,3,0,0" TextWrapping="Wrap"/>
-        </StackPanel>
+        <Grid Grid.Row="0" Margin="0,0,0,14">
+            <StackPanel>
+                <TextBlock Text="Coordinate Audit" FontSize="24" FontWeight="SemiBold" Foreground="#172B4D"/>
+                <TextBlock x:Name="ProjectSummaryText" Foreground="#5E6C84" Margin="0,4,0,0"/>
+            </StackPanel>
+            <Border HorizontalAlignment="Right" VerticalAlignment="Top" Background="#E3FCEF" CornerRadius="12" Padding="10,4">
+                <TextBlock Text="READ ONLY" Foreground="#006644" FontWeight="SemiBold"/>
+            </Border>
+        </Grid>
 
-        <Border Grid.Row="1" Background="White" BorderBrush="#D9E0E7" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Margin="0,0,0,12">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="260"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="310"/>
+                    <ColumnDefinition Width="1"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Reference" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                <ComboBox Grid.Column="1" x:Name="ReferenceComboBox" DisplayMemberPath="DisplayName" SelectedValuePath="Id"/>
-                <TextBlock Grid.Column="2" Text="Horizontal (mm)" VerticalAlignment="Center" Margin="16,0,8,0"/>
-                <TextBox Grid.Column="3" x:Name="HorizontalToleranceTextBox" Text="1" VerticalContentAlignment="Center"/>
-                <TextBlock Grid.Column="4" Text="Vertical (mm)" VerticalAlignment="Center" Margin="16,0,8,0"/>
-                <TextBox Grid.Column="5" x:Name="VerticalToleranceTextBox" Text="1" VerticalContentAlignment="Center"/>
-                <TextBlock Grid.Column="6" Text="Rotation (°)" VerticalAlignment="Center" Margin="16,0,8,0"/>
-                <TextBox Grid.Column="7" x:Name="AngularToleranceTextBox" Text="0.001" VerticalContentAlignment="Center"/>
-                <StackPanel Grid.Column="9" Orientation="Horizontal">
-                    <Button Content="Run Comparison" Click="RunComparison_Click" Background="#0B6EBD" Foreground="White" BorderThickness="0"/>
-                    <Button Content="Export CSV" Click="ExportCsv_Click"/>
+                <StackPanel Grid.Column="0" Margin="0,0,18,0">
+                    <TextBlock Text="Reference model" FontWeight="SemiBold" Foreground="#172B4D"/>
+                    <TextBlock Text="All linked models are compared with this model." Foreground="#6B778C" Margin="0,2,0,7"/>
+                    <ComboBox x:Name="ReferenceComboBox" DisplayMemberPath="DisplayName" SelectedValuePath="Id"
+                              SelectionChanged="ReferenceComboBox_SelectionChanged"/>
+                </StackPanel>
+                <Border Grid.Column="1" Background="#E1E6ED"/>
+                <Grid Grid.Column="2" Margin="18,0,0,0">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <TextBlock Text="Tolerance limits" FontWeight="SemiBold" Foreground="#172B4D"/>
+                    <TextBlock Grid.Row="1" Text="Maximum permitted difference before the audit status changes to FAIL. Results update automatically."
+                               Foreground="#6B778C" Margin="0,2,0,7"/>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/><ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="Auto"/><ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="Auto"/><ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Horizontal tolerance (mm)" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBox Grid.Column="1" x:Name="HorizontalToleranceTextBox" Text="1" TextChanged="ToleranceTextBox_TextChanged"/>
+                        <TextBlock Grid.Column="2" Text="Vertical tolerance (mm)" VerticalAlignment="Center" Margin="18,0,8,0"/>
+                        <TextBox Grid.Column="3" x:Name="VerticalToleranceTextBox" Text="1" TextChanged="ToleranceTextBox_TextChanged"/>
+                        <TextBlock Grid.Column="4" Text="Rotation tolerance (°)" VerticalAlignment="Center" Margin="18,0,8,0"/>
+                        <TextBox Grid.Column="5" x:Name="AngularToleranceTextBox" Text="0.001" TextChanged="ToleranceTextBox_TextChanged"/>
+                        <TextBlock Grid.Column="6" x:Name="InputValidationText" Foreground="#BF2600" VerticalAlignment="Center" Margin="14,0,0,0"/>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource CardStyle}" Margin="0,0,0,12" Padding="14,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="220"/><ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="*"/><ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="*"/><ColumnDefinition Width="1"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Margin="0,0,14,0">
+                    <TextBlock Text="Current host model" Foreground="#6B778C"/>
+                    <TextBlock x:Name="HostLocationText" FontWeight="SemiBold" Foreground="#172B4D" Margin="0,3,0,0"/>
+                </StackPanel>
+                <Border Grid.Column="1" Background="#E1E6ED"/>
+                <StackPanel Grid.Column="2" Margin="14,0">
+                    <TextBlock Text="Project Base Point" Foreground="#6B778C"/>
+                    <TextBlock x:Name="HostProjectBasePointText" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                </StackPanel>
+                <Border Grid.Column="3" Background="#E1E6ED"/>
+                <StackPanel Grid.Column="4" Margin="14,0">
+                    <TextBlock Text="Survey Point" Foreground="#6B778C"/>
+                    <TextBlock x:Name="HostSurveyPointText" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,3,0,0"/>
+                </StackPanel>
+                <Border Grid.Column="5" Background="#E1E6ED"/>
+                <StackPanel Grid.Column="6" Margin="14,0,0,0">
+                    <TextBlock Text="Internal Origin" Foreground="#6B778C"/>
+                    <TextBlock x:Name="HostInternalOriginText" FontWeight="SemiBold" TextWrapping="Wrap" Margin="0,3,0,0"/>
                 </StackPanel>
             </Grid>
         </Border>
 
-        <DataGrid Grid.Row="2" x:Name="ResultsGrid" AutoGenerateColumns="False" IsReadOnly="True"
-                  CanUserAddRows="False" SelectionMode="Single" SelectionChanged="ResultsGrid_SelectionChanged"
-                  GridLinesVisibility="Horizontal" AlternatingRowBackground="#F8FAFC" Background="White">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding Status}" Value="PASS"><Setter Property="Background" Value="#E3FCEF"/></DataTrigger>
-                        <DataTrigger Binding="{Binding Status}" Value="WARNING"><Setter Property="Background" Value="#FFF7D6"/></DataTrigger>
-                        <DataTrigger Binding="{Binding Status}" Value="FAIL"><Setter Property="Background" Value="#FFEBE6"/></DataTrigger>
-                        <DataTrigger Binding="{Binding Status}" Value="UNAVAILABLE"><Setter Property="Background" Value="#EBECF0"/></DataTrigger>
-                        <DataTrigger Binding="{Binding Status}" Value="REFERENCE"><Setter Property="Background" Value="#DEEBFF"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger>
-                        <DataTrigger Binding="{Binding Status}" Value="HOST"><Setter Property="Background" Value="#EAF2F8"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="95"/>
-                <DataGridTextColumn Header="Type" Binding="{Binding RowType}" Width="65"/>
-                <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="220"/>
-                <DataGridTextColumn Header="Instance" Binding="{Binding Instance}" Width="220"/>
-                <DataGridTextColumn Header="Loaded" Binding="{Binding Loaded}" Width="70"/>
-                <DataGridTextColumn Header="Project Location" Binding="{Binding ProjectLocation}" Width="160"/>
-                <DataGridTextColumn Header="True North" Binding="{Binding TrueNorth}" Width="90"/>
-                <DataGridTextColumn Header="Project Base Point" Binding="{Binding ProjectBasePoint}" Width="280"/>
-                <DataGridTextColumn Header="Survey Point" Binding="{Binding SurveyPoint}" Width="280"/>
-                <DataGridTextColumn Header="Internal Origin" Binding="{Binding InternalOrigin}" Width="240"/>
-                <DataGridTextColumn Header="Internal Origin Δ" Binding="{Binding InternalDelta}" Width="150"/>
-                <DataGridTextColumn Header="PBP Δ" Binding="{Binding ProjectBaseDelta}" Width="150"/>
-                <DataGridTextColumn Header="Survey Δ" Binding="{Binding SurveyDelta}" Width="150"/>
-                <DataGridTextColumn Header="Rotation Δ" Binding="{Binding RotationDelta}" Width="95"/>
-                <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="*" MinWidth="260"/>
-            </DataGrid.Columns>
-        </DataGrid>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="2.15*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="1*"/></Grid.ColumnDefinitions>
+            <Border Grid.Column="0" Style="{StaticResource CardStyle}" Padding="0">
+                <DataGrid x:Name="ResultsGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False"
+                          SelectionMode="Single" SelectionChanged="ResultsGrid_SelectionChanged" GridLinesVisibility="Horizontal"
+                          AlternatingRowBackground="#F8FAFC" Background="White" BorderThickness="0"
+                          HeadersVisibility="Column" RowHeaderWidth="0" RowHeight="36" EnableRowVirtualization="True">
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Setter Property="BorderBrush" Value="#E9EDF2"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Status}" Value="PASS"><Setter Property="Background" Value="#E3FCEF"/></DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="WARNING"><Setter Property="Background" Value="#FFF7D6"/></DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="FAIL"><Setter Property="Background" Value="#FFEBE6"/></DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="UNAVAILABLE"><Setter Property="Background" Value="#EBECF0"/></DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="REFERENCE"><Setter Property="Background" Value="#DEEBFF"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger>
+                                <DataTrigger Binding="{Binding Status}" Value="HOST"><Setter Property="Background" Value="#EAF2F8"/><Setter Property="FontWeight" Value="SemiBold"/></DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="92"/>
+                        <DataGridTextColumn Header="Type" Binding="{Binding RowType}" Width="58"/>
+                        <DataGridTextColumn Header="Model" Binding="{Binding Model}" Width="*" MinWidth="190"/>
+                        <DataGridTextColumn Header="Loaded" Binding="{Binding Loaded}" Width="62"/>
+                        <DataGridTextColumn Header="Project Location" Binding="{Binding ProjectLocation}" Width="145"/>
+                        <DataGridTextColumn Header="Shared Position Δ" Binding="{Binding SurveyDelta}" Width="150"/>
+                        <DataGridTextColumn Header="Rotation Δ" Binding="{Binding RotationDelta}" Width="88"/>
+                        <DataGridTextColumn Header="Pinned" Binding="{Binding Pinned}" Width="65"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
 
-        <Border Grid.Row="3" Background="White" BorderBrush="#D9E0E7" BorderThickness="1" Margin="0,12,0,12" Padding="10">
-            <Grid>
-                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                <TextBlock Text="Selected Link Details" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                <TextBox Grid.Row="1" x:Name="DetailsTextBox" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent"/>
-            </Grid>
-        </Border>
+            <Border Grid.Column="2" Style="{StaticResource CardStyle}">
+                <Grid>
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <TextBlock Text="Model details" FontSize="16" FontWeight="SemiBold" Foreground="#172B4D"/>
+                    <TextBlock Text="Select a row to inspect all coordinates, transforms, and audit notes."
+                               Grid.Row="1" Foreground="#6B778C" TextWrapping="Wrap" Margin="0,3,0,10"/>
+                    <TextBox Grid.Row="2" x:Name="DetailsTextBox" IsReadOnly="True" TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                             BorderThickness="0" Background="Transparent" Padding="0"/>
+                </Grid>
+            </Border>
+        </Grid>
 
-        <Grid Grid.Row="4">
-            <TextBlock x:Name="StatusSummaryText" VerticalAlignment="Center" FontWeight="SemiBold"/>
-            <Button Content="Close" HorizontalAlignment="Right" MinWidth="90" Click="Close_Click"/>
+        <Grid Grid.Row="4" Margin="0,12,0,0">
+            <TextBlock x:Name="StatusSummaryText" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="#172B4D"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Export CSV" Click="ExportCsv_Click"/>
+                <Button Content="Close" MinWidth="90" Click="Close_Click" Background="#0B6EBD" Foreground="White" BorderThickness="0"/>
+            </StackPanel>
         </Grid>
     </Grid>
 </Window>
