@@ -4,7 +4,7 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 
 ## Current milestone
 
-**M5 - Comparison Engine and WPF UI**
+**M7.1 - CSV Reporting**
 
 - Revit 2024 project targeting .NET Framework 4.8.
 - `Coordinate Auditor` ribbon panel and `Open Auditor` command.
@@ -27,6 +27,9 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 - Host or any available linked instance can be selected as the reference.
 - User-defined horizontal, vertical, and angular tolerances.
 - PASS, WARNING, FAIL, and UNAVAILABLE results with explicit reasons.
+- CSV export from the current comparison, including audit metadata, reference,
+  tolerances, link information, numeric deltas, result reasons, and transforms.
+- UTF-8 BOM output for reliable Excel handling of Unicode model names and paths.
 - PowerShell development install and uninstall scripts.
 - Unloaded, missing, and inaccessible link documents remain visible with an explicit
   coordinate-read status instead of failing the complete audit.
