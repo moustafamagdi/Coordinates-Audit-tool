@@ -1,3 +1,5 @@
+using Autodesk.Revit.DB;
+
 namespace CoordinatesAudit.Models
 {
     public sealed class LinkTransformData
@@ -11,5 +13,9 @@ namespace CoordinatesAudit.Models
         public string LinkedInternalOriginInHost { get; set; }
         public string LinkedProjectBasePointInHost { get; set; }
         public string LinkedSurveyPointInHost { get; set; }
+        public XYZ LinkedInternalOriginInHostRaw { get; set; }
+        public XYZ LinkedProjectBasePointInHostRaw { get; set; }
+        public XYZ LinkedSurveyPointInHostRaw { get; set; }
+        public double TotalRotationRadians { get; set; }
     }
 }
