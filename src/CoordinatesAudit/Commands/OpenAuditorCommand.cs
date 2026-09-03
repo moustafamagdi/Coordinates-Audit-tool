@@ -1,10 +1,12 @@
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
-using CoordinatesAudit.Formatting;
 using CoordinatesAudit.Models;
 using CoordinatesAudit.Services;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows.Interop;
+using CoordinatesAudit.Views;
 
 namespace CoordinatesAudit.Commands
 {
@@ -30,15 +32,9 @@ namespace CoordinatesAudit.Commands
                 var linkDiscovery = new LinkDiscoveryService();
                 IReadOnlyList<LinkInstanceData> links = linkDiscovery.Discover(uiDocument.Document);
 
-                var dialog = new TaskDialog("Coordinate Auditor - Host Model")
-                {
-                    MainInstruction = "Host, linked coordinates, and transforms",
-                    MainContent = $"Model: {report.ModelTitle}\nProject location: {report.ProjectLocationName}\nLength unit: {report.LengthUnit}\n\n{LinkDiscoveryFormatter.FormatSummary(links)}",
-                    ExpandedContent = HostCoordinateReportFormatter.Format(report) + "\n\nREVIT LINKS\n\n" + LinkDiscoveryFormatter.Format(links),
-                    CommonButtons = TaskDialogCommonButtons.Close,
-                    DefaultButton = TaskDialogResult.Close
-                };
-                dialog.Show();
+                var window = new AuditWindow(report, links);
+                new WindowInteropHelper(window).Owner = Process.GetCurrentProcess().MainWindowHandle;
+                window.ShowDialog();
                 return Result.Succeeded;
             }
             catch (System.Exception exception)
