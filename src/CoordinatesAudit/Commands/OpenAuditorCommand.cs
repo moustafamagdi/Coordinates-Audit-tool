@@ -4,6 +4,7 @@ using Autodesk.Revit.UI;
 using CoordinatesAudit.Formatting;
 using CoordinatesAudit.Models;
 using CoordinatesAudit.Services;
+using System.Collections.Generic;
 
 namespace CoordinatesAudit.Commands
 {
@@ -26,12 +27,14 @@ namespace CoordinatesAudit.Commands
                 HostCoordinateReport report = reader.Read(
                     uiDocument.Document,
                     commandData.Application.Application.VersionBuild);
+                var linkDiscovery = new LinkDiscoveryService();
+                IReadOnlyList<LinkInstanceData> links = linkDiscovery.Discover(uiDocument.Document);
 
                 var dialog = new TaskDialog("Coordinate Auditor - Host Model")
                 {
-                    MainInstruction = "Host model coordinate data",
-                    MainContent = $"Model: {report.ModelTitle}\nProject location: {report.ProjectLocationName}\nLength unit: {report.LengthUnit}",
-                    ExpandedContent = HostCoordinateReportFormatter.Format(report),
+                    MainInstruction = "Host coordinates and Revit link inventory",
+                    MainContent = $"Model: {report.ModelTitle}\nProject location: {report.ProjectLocationName}\nLength unit: {report.LengthUnit}\n\n{LinkDiscoveryFormatter.FormatSummary(links)}",
+                    ExpandedContent = HostCoordinateReportFormatter.Format(report) + "\n\nREVIT LINKS\n\n" + LinkDiscoveryFormatter.Format(links),
                     CommonButtons = TaskDialogCommonButtons.Close,
                     DefaultButton = TaskDialogResult.Close
                 };
