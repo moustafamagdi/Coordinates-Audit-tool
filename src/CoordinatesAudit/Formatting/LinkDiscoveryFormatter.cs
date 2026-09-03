@@ -29,6 +29,8 @@ namespace CoordinatesAudit.Formatting
                 output.AppendLine($"Workset: {link.Workset}");
                 output.AppendLine($"Pinned: {link.Pinned}");
                 output.AppendLine($"Path: {link.Path}");
+                output.AppendLine($"Coordinate data: {link.CoordinateReadStatus}");
+                AppendCoordinates(output, link.CoordinateReport);
                 if (index < links.Count - 1) output.AppendLine();
             }
 
@@ -42,6 +44,23 @@ namespace CoordinatesAudit.Formatting
             int unavailableInstances = placedInstances - loadedInstances;
             int typeOnlyRows = links.Count(link => !link.HasInstance);
             return $"Placed instances: {placedInstances}\nLoaded: {loadedInstances}\nUnavailable: {unavailableInstances}\nTypes without instances: {typeOnlyRows}";
+        }
+
+        private static void AppendCoordinates(StringBuilder output, HostCoordinateReport report)
+        {
+            if (report == null) return;
+
+            output.AppendLine($"Linked project location: {report.ProjectLocationName}");
+            output.AppendLine($"Angle to True North: {report.AngleToTrueNorth}");
+            output.AppendLine($"Project Base Point E/W: {report.ProjectBasePoint.EastWest}");
+            output.AppendLine($"Project Base Point N/S: {report.ProjectBasePoint.NorthSouth}");
+            output.AppendLine($"Project Base Point Elevation: {report.ProjectBasePoint.Elevation}");
+            output.AppendLine($"Project Base Point internal position: {report.ProjectBasePoint.InternalPosition}");
+            output.AppendLine($"Survey Point E/W: {report.SurveyPoint.EastWest}");
+            output.AppendLine($"Survey Point N/S: {report.SurveyPoint.NorthSouth}");
+            output.AppendLine($"Survey Point Elevation: {report.SurveyPoint.Elevation}");
+            output.AppendLine($"Survey Point internal position: {report.SurveyPoint.InternalPosition}");
+            output.AppendLine($"Internal Origin: {report.InternalOriginPosition}");
         }
     }
 }
