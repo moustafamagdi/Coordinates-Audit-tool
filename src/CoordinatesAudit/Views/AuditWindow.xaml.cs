@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 using CoordinatesAudit.Models;
 using CoordinatesAudit.Services;
 using CoordinatesAudit.ViewModels;
@@ -17,6 +18,11 @@ namespace CoordinatesAudit.Views
         private readonly IReadOnlyList<LinkInstanceData> _links;
         private readonly ObservableCollection<AuditRowViewModel> _rows = new ObservableCollection<AuditRowViewModel>();
         private readonly CoordinateComparisonEngine _comparisonEngine = new CoordinateComparisonEngine();
+        private readonly CsvAuditExporter _csvExporter = new CsvAuditExporter();
+        private ReferenceModelOption _lastReference;
+        private double _lastHorizontalTolerance;
+        private double _lastVerticalTolerance;
+        private double _lastAngularTolerance;
 
         public AuditWindow(HostCoordinateReport host, IReadOnlyList<LinkInstanceData> links)
         {
@@ -66,6 +72,11 @@ namespace CoordinatesAudit.Views
                 !TryReadTolerance(VerticalToleranceTextBox.Text, "vertical", out double vertical) ||
                 !TryReadTolerance(AngularToleranceTextBox.Text, "rotation", out double angular)) return;
 
+            _lastReference = reference;
+            _lastHorizontalTolerance = horizontal;
+            _lastVerticalTolerance = vertical;
+            _lastAngularTolerance = angular;
+
             _rows.Clear();
             foreach (LinkInstanceData link in _links)
             {
@@ -79,6 +90,48 @@ namespace CoordinatesAudit.Views
             int unavailable = _rows.Count(row => row.Status == "UNAVAILABLE");
             StatusSummaryText.Text = $"Total: {_rows.Count}   PASS: {pass}   WARNING: {warning}   FAIL: {fail}   UNAVAILABLE: {unavailable}";
             if (_rows.Count > 0) ResultsGrid.SelectedIndex = 0;
+        }
+
+        private void ExportCsv_Click(object sender, RoutedEventArgs e)
+        {
+            if (_lastReference == null || _rows.Count == 0)
+            {
+                MessageBox.Show("Run the comparison before exporting.", "Coordinate Auditor", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            var dialog = new SaveFileDialog
+            {
+                Title = "Export Coordinate Audit Report",
+                Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*",
+                DefaultExt = ".csv",
+                AddExtension = true,
+                FileName = MakeSafeFileName(_host.ModelTitle) + "_Coordinate_Audit_" + DateTime.Now.ToString("yyyyMMdd_HHmm") + ".csv"
+            };
+
+            if (dialog.ShowDialog(this) != true) return;
+
+            try
+            {
+                _csvExporter.Export(dialog.FileName, _host, _lastReference,
+                    _lastHorizontalTolerance, _lastVerticalTolerance, _lastAngularTolerance,
+                    _rows.ToList());
+                MessageBox.Show("The CSV report was exported successfully.", "Coordinate Auditor", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("The report could not be exported.\n\n" + exception.Message,
+                    "Coordinate Auditor", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private static string MakeSafeFileName(string value)
+        {
+            foreach (char invalidCharacter in System.IO.Path.GetInvalidFileNameChars())
+            {
+                value = value.Replace(invalidCharacter, '_');
+            }
+            return value;
         }
 
         private static bool TryReadTolerance(string text, string name, out double value)
