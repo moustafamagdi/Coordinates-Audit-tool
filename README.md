@@ -4,7 +4,7 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 
 ## Current milestone
 
-**M4 - Link Transform Analysis**
+**M5 - Comparison Engine and WPF UI**
 
 - Revit 2024 project targeting .NET Framework 4.8.
 - `Coordinate Auditor` ribbon panel and `Open Auditor` command.
@@ -23,11 +23,15 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 - Scale and mirrored-state diagnostics from the total transform.
 - Linked Internal Origin, Project Base Point, and Survey Point transformed into
   the host model's internal coordinate space.
+- WPF audit window with a sortable results grid and selected-link details.
+- Host or any available linked instance can be selected as the reference.
+- User-defined horizontal, vertical, and angular tolerances.
+- PASS, WARNING, FAIL, and UNAVAILABLE results with explicit reasons.
 - PowerShell development install and uninstall scripts.
 - Unloaded, missing, and inaccessible link documents remain visible with an explicit
   coordinate-read status instead of failing the complete audit.
 - Transform failures remain isolated to their link instance.
-- No tolerance-based comparison or model-modifying behavior yet.
+- No model-modifying behavior.
 
 ## Requirements
 
@@ -74,7 +78,7 @@ The development installation is placed under:
 
 ## Safety
 
-M4 is read-only. It opens no Revit transaction and changes no document data.
+M5 is read-only. It opens no Revit transaction and changes no document data.
 
 ## License
 
