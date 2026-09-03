@@ -1,3 +1,5 @@
+using Autodesk.Revit.DB;
+
 namespace CoordinatesAudit.Models
 {
     public sealed class HostCoordinateReport
@@ -12,5 +14,7 @@ namespace CoordinatesAudit.Models
         public CoordinatePointData ProjectBasePoint { get; set; }
         public CoordinatePointData SurveyPoint { get; set; }
         public string InternalOriginPosition { get; set; }
+        public XYZ InternalOriginRaw { get; set; }
+        public double AngleToTrueNorthRaw { get; set; }
     }
 }
