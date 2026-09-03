@@ -32,7 +32,7 @@ namespace CoordinatesAudit.Commands
 
                 var dialog = new TaskDialog("Coordinate Auditor - Host Model")
                 {
-                    MainInstruction = "Host coordinates and Revit link inventory",
+                    MainInstruction = "Host and linked-model coordinates",
                     MainContent = $"Model: {report.ModelTitle}\nProject location: {report.ProjectLocationName}\nLength unit: {report.LengthUnit}\n\n{LinkDiscoveryFormatter.FormatSummary(links)}",
                     ExpandedContent = HostCoordinateReportFormatter.Format(report) + "\n\nREVIT LINKS\n\n" + LinkDiscoveryFormatter.Format(links),
                     CommonButtons = TaskDialogCommonButtons.Close,
