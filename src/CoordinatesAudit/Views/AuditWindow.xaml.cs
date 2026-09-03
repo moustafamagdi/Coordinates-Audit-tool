@@ -73,7 +73,12 @@ namespace CoordinatesAudit.Views
             return options;
         }
 
-        private void ReferenceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => ScheduleComparison();
+        private void ReferenceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!_isInitialized) return;
+            _autoRunTimer.Stop();
+            RunComparison();
+        }
 
         private void ToleranceTextBox_TextChanged(object sender, TextChangedEventArgs e) => ScheduleComparison();
 
@@ -106,13 +111,21 @@ namespace CoordinatesAudit.Views
             _lastHorizontalTolerance = horizontal;
             _lastVerticalTolerance = vertical;
             _lastAngularTolerance = angular;
+            ActiveReferenceText.Text = "Active: " + reference.DisplayName + "  •  Updated " + DateTime.Now.ToString("HH:mm:ss");
 
             _rows.Clear();
             _rows.Add(AuditRowViewModel.CreateHost(_host, reference.Id == "HOST"));
             foreach (LinkInstanceData link in _links)
             {
                 AuditComparisonResult result = _comparisonEngine.Compare(link, reference, horizontal, vertical, angular);
-                _rows.Add(AuditRowViewModel.Create(link, result));
+                AuditRowViewModel row = AuditRowViewModel.Create(link, result);
+                if (reference.Id == link.InstanceId)
+                {
+                    row.Status = "REFERENCE";
+                    row.Reason = "This linked-model instance is the selected reference.";
+                    row.Details = "SELECTED REFERENCE MODEL\n\n" + row.Details;
+                }
+                _rows.Add(row);
             }
 
             IReadOnlyList<AuditRowViewModel> linkRows = _rows.Where(row => row.RowType == "Link").ToList();
@@ -120,7 +133,8 @@ namespace CoordinatesAudit.Views
             int warning = linkRows.Count(row => row.Status == "WARNING");
             int fail = linkRows.Count(row => row.Status == "FAIL");
             int unavailable = linkRows.Count(row => row.Status == "UNAVAILABLE");
-            StatusSummaryText.Text = $"Links: {linkRows.Count}   PASS: {pass}   WARNING: {warning}   FAIL: {fail}   UNAVAILABLE: {unavailable}";
+            int referenceRows = linkRows.Count(row => row.Status == "REFERENCE");
+            StatusSummaryText.Text = $"Links: {linkRows.Count}   PASS: {pass}   WARNING: {warning}   FAIL: {fail}   UNAVAILABLE: {unavailable}   REFERENCE: {referenceRows}";
             if (_rows.Count > 0) ResultsGrid.SelectedIndex = 0;
         }
 
