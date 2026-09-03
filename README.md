@@ -30,6 +30,10 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 - CSV export from the current comparison, including audit metadata, reference,
   tolerances, link information, numeric deltas, result reasons, and transforms.
 - UTF-8 BOM output for reliable Excel handling of Unicode model names and paths.
+- The current host model appears as the first DataGrid row with its Project
+  Location, True North, PBP, Survey Point, and Internal Origin values.
+- Selecting the host row shows its complete coordinate details while link-only
+  PASS/FAIL totals remain unchanged.
 
 ## Default audit logic
 
