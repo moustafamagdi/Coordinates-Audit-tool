@@ -26,6 +26,9 @@ namespace CoordinatesAudit.Services
                 .ToDictionary(group => group.Key, group => group.OrderBy(instance => instance.Name).ToList());
 
             var results = new List<LinkInstanceData>();
+            var coordinateReportsByType = new Dictionary<ElementId, HostCoordinateReport>();
+            var coordinateErrorsByType = new Dictionary<ElementId, string>();
+            var coordinateReader = new HostCoordinateReader();
             foreach (RevitLinkType linkType in types)
             {
                 string path = GetExternalPath(document, linkType.Id);
@@ -41,6 +44,37 @@ namespace CoordinatesAudit.Services
 
                 foreach (RevitLinkInstance instance in instances)
                 {
+                    Document linkedDocument = instance.GetLinkDocument();
+                    HostCoordinateReport coordinateReport = null;
+                    string coordinateReadStatus;
+
+                    if (!isLoaded || linkedDocument == null)
+                    {
+                        coordinateReadStatus = "Unavailable: link document is not loaded";
+                    }
+                    else if (coordinateReportsByType.TryGetValue(linkType.Id, out coordinateReport))
+                    {
+                        coordinateReadStatus = "Available";
+                    }
+                    else if (coordinateErrorsByType.TryGetValue(linkType.Id, out string cachedError))
+                    {
+                        coordinateReadStatus = cachedError;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            coordinateReport = coordinateReader.Read(linkedDocument, document.Application.VersionBuild);
+                            coordinateReportsByType.Add(linkType.Id, coordinateReport);
+                            coordinateReadStatus = "Available";
+                        }
+                        catch (Exception exception)
+                        {
+                            coordinateReadStatus = "Unavailable: " + exception.Message;
+                            coordinateErrorsByType.Add(linkType.Id, coordinateReadStatus);
+                        }
+                    }
+
                     results.Add(new LinkInstanceData
                     {
                         LinkTypeName = linkType.Name,
@@ -54,7 +88,9 @@ namespace CoordinatesAudit.Services
                         Workset = GetWorksetName(document, instance.WorksetId),
                         Pinned = instance.Pinned ? "Yes" : "No",
                         IsLoaded = isLoaded && instance.GetLinkDocument() != null,
-                        HasInstance = true
+                        HasInstance = true,
+                        CoordinateReadStatus = coordinateReadStatus,
+                        CoordinateReport = coordinateReport
                     });
                 }
             }
@@ -77,7 +113,9 @@ namespace CoordinatesAudit.Services
                 Workset = "-",
                 Pinned = "-",
                 IsLoaded = isLoaded,
-                HasInstance = false
+                HasInstance = false,
+                CoordinateReadStatus = "Unavailable: no placed instance",
+                CoordinateReport = null
             };
         }
 
