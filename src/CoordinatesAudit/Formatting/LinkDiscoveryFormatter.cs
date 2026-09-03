@@ -31,6 +31,8 @@ namespace CoordinatesAudit.Formatting
                 output.AppendLine($"Path: {link.Path}");
                 output.AppendLine($"Coordinate data: {link.CoordinateReadStatus}");
                 AppendCoordinates(output, link.CoordinateReport);
+                output.AppendLine($"Transform data: {link.TransformReadStatus}");
+                AppendTransform(output, link.TransformData);
                 if (index < links.Count - 1) output.AppendLine();
             }
 
@@ -61,6 +63,21 @@ namespace CoordinatesAudit.Formatting
             output.AppendLine($"Survey Point Elevation: {report.SurveyPoint.Elevation}");
             output.AppendLine($"Survey Point internal position: {report.SurveyPoint.InternalPosition}");
             output.AppendLine($"Internal Origin: {report.InternalOriginPosition}");
+        }
+
+        private static void AppendTransform(StringBuilder output, LinkTransformData transform)
+        {
+            if (transform == null) return;
+
+            output.AppendLine($"Instance translation: {transform.InstanceTranslation}");
+            output.AppendLine($"Instance rotation: {transform.InstanceRotation}");
+            output.AppendLine($"Total translation: {transform.TotalTranslation}");
+            output.AppendLine($"Total rotation: {transform.TotalRotation}");
+            output.AppendLine($"Scale: {transform.Scale}");
+            output.AppendLine($"Mirrored: {transform.Mirrored}");
+            output.AppendLine($"Linked Internal Origin in Host: {transform.LinkedInternalOriginInHost}");
+            output.AppendLine($"Linked Project Base Point in Host: {transform.LinkedProjectBasePointInHost}");
+            output.AppendLine($"Linked Survey Point in Host: {transform.LinkedSurveyPointInHost}");
         }
     }
 }
