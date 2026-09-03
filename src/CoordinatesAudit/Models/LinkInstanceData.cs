@@ -14,5 +14,7 @@ namespace CoordinatesAudit.Models
         public string Pinned { get; set; }
         public bool IsLoaded { get; set; }
         public bool HasInstance { get; set; }
+        public string CoordinateReadStatus { get; set; }
+        public HostCoordinateReport CoordinateReport { get; set; }
     }
 }
