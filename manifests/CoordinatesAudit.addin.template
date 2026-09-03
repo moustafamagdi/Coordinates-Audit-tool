@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>Revit Coordinate Auditor</Name>
+    <Assembly>__ASSEMBLY_PATH__</Assembly>
+    <AddInId>60C98573-AE71-439D-A966-BC3617EBD64B</AddInId>
+    <FullClassName>CoordinatesAudit.App</FullClassName>
+    <VendorId>MMA</VendorId>
+    <VendorDescription>Moustafa Magdi</VendorDescription>
+  </AddIn>
+</RevitAddIns>
