@@ -4,7 +4,7 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 
 ## Current milestone
 
-**M2 - Linked Models Discovery**
+**M3 - Linked Models Coordinate Reader**
 
 - Revit 2024 project targeting .NET Framework 4.8.
 - `Coordinate Auditor` ribbon panel and `Open Auditor` command.
@@ -13,8 +13,14 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 - Inventory of every Revit link type and every placed link instance.
 - Link status, path type, saved path, Attachment/Overlay mode, workset, pin state,
   element IDs, and separate rows for repeated instances.
+- Coordinate reports for every directly loaded linked document, including Project
+  Base Point, Survey Point, Internal Origin, Project Location, and True North angle.
+- Coordinate data is cached per link type while every placed instance remains a
+  separate result row.
 - PowerShell development install and uninstall scripts.
-- No coordinate reading from inside linked documents and no model-modifying behavior.
+- Unloaded, missing, and inaccessible link documents remain visible with an explicit
+  coordinate-read status instead of failing the complete audit.
+- No coordinate comparison or model-modifying behavior yet.
 
 ## Requirements
 
@@ -61,7 +67,7 @@ The development installation is placed under:
 
 ## Safety
 
-M2 is read-only. It opens no Revit transaction and changes no document data.
+M3 is read-only. It opens no Revit transaction and changes no document data.
 
 ## License
 
