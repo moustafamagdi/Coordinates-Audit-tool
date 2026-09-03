@@ -27,6 +27,8 @@
         <StackPanel Grid.Row="0" Margin="0,0,0,12">
             <TextBlock Text="Coordinate Audit" FontSize="24" FontWeight="SemiBold" Foreground="#172B4D"/>
             <TextBlock x:Name="ProjectSummaryText" Foreground="#5E6C84" Margin="0,4,0,0"/>
+            <TextBlock Text="Shared Coordinates mode: PBP and Internal Origin differences are informational; shared position, elevation, rotation, scale, and mirroring control PASS/FAIL."
+                       Foreground="#5E6C84" Margin="0,3,0,0" TextWrapping="Wrap"/>
         </StackPanel>
 
         <Border Grid.Row="1" Background="White" BorderBrush="#D9E0E7" BorderThickness="1" CornerRadius="4" Padding="12" Margin="0,0,0,12">
