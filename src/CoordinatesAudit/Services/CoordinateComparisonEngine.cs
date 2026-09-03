@@ -23,25 +23,40 @@ namespace CoordinatesAudit.Services
             bool projectBaseMatches = Within(projectBaseDelta, horizontalToleranceMm, verticalToleranceMm);
             bool surveyMatches = Within(surveyDelta, horizontalToleranceMm, verticalToleranceMm);
             bool rotationMatches = Math.Abs(rotationDelta) <= angularToleranceDegrees;
+            bool scaleMatches = IsUnitScale(transform);
+            bool isPinned = string.Equals(link.Pinned, "Yes", StringComparison.OrdinalIgnoreCase);
 
             string status;
             string reason;
-            if (internalMatches && projectBaseMatches && surveyMatches && rotationMatches)
+            if (!surveyMatches)
             {
-                status = "PASS";
-                reason = "All coordinate points and rotation match the selected reference within tolerance.";
+                status = "FAIL";
+                reason = "Shared position or elevation differs from the selected reference.";
             }
-            else if (surveyMatches && rotationMatches)
+            else if (!rotationMatches)
+            {
+                status = "FAIL";
+                reason = "Rotation differs from the selected reference.";
+            }
+            else if (!scaleMatches)
+            {
+                status = "FAIL";
+                reason = "Link scale is not 1.0 on all axes.";
+            }
+            else if (transform.IsMirrored)
+            {
+                status = "FAIL";
+                reason = "The link transform is mirrored.";
+            }
+            else if (!isPinned)
             {
                 status = "WARNING";
-                reason = "Survey Point and rotation match, but the Internal Origin or Project Base Point differs.";
+                reason = "Shared coordinates align, but the link instance is not pinned." + BuildOriginInformation(internalMatches, projectBaseMatches);
             }
             else
             {
-                status = "FAIL";
-                reason = !rotationMatches
-                    ? "Rotation differs from the selected reference."
-                    : "Survey Point position differs from the selected reference.";
+                status = "PASS";
+                reason = "Shared position, elevation, rotation, scale, and mirroring checks passed." + BuildOriginInformation(internalMatches, projectBaseMatches);
             }
 
             return new AuditComparisonResult
@@ -73,6 +88,24 @@ namespace CoordinatesAudit.Services
         private static bool Within(Distance distance, double horizontalToleranceMm, double verticalToleranceMm)
         {
             return distance.HorizontalMm <= horizontalToleranceMm && distance.VerticalMm <= verticalToleranceMm;
+        }
+
+        private static bool IsUnitScale(LinkTransformData transform)
+        {
+            const double tolerance = 1e-9;
+            return Math.Abs(transform.ScaleX - 1.0) <= tolerance &&
+                   Math.Abs(transform.ScaleY - 1.0) <= tolerance &&
+                   Math.Abs(transform.ScaleZ - 1.0) <= tolerance;
+        }
+
+        private static string BuildOriginInformation(bool internalMatches, bool projectBaseMatches)
+        {
+            if (internalMatches && projectBaseMatches) return string.Empty;
+            if (!internalMatches && !projectBaseMatches)
+                return " INFO: Internal Origin and Project Base Point differ from the reference.";
+            if (!internalMatches)
+                return " INFO: Internal Origin differs from the reference.";
+            return " INFO: Project Base Point differs from the reference.";
         }
 
         private static double ToDegrees(double radians) => radians * 180.0 / Math.PI;
