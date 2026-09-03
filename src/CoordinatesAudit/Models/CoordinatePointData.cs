@@ -1,8 +1,10 @@
+using Autodesk.Revit.DB;
+
 namespace CoordinatesAudit.Models
 {
     public sealed class CoordinatePointData
     {
-        public CoordinatePointData(string name, string eastWest, string northSouth, string elevation, string internalPosition, bool pinned)
+        public CoordinatePointData(string name, string eastWest, string northSouth, string elevation, string internalPosition, bool pinned, XYZ internalPositionRaw)
         {
             Name = name;
             EastWest = eastWest;
@@ -10,6 +12,7 @@ namespace CoordinatesAudit.Models
             Elevation = elevation;
             InternalPosition = internalPosition;
             Pinned = pinned;
+            InternalPositionRaw = internalPositionRaw;
         }
 
         public string Name { get; }
@@ -18,5 +21,6 @@ namespace CoordinatesAudit.Models
         public string Elevation { get; }
         public string InternalPosition { get; }
         public bool Pinned { get; }
+        public XYZ InternalPositionRaw { get; }
     }
 }
