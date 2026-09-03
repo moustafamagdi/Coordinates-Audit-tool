@@ -12,6 +12,7 @@ namespace CoordinatesAudit.ViewModels
         public string Model { get; set; }
         public string Instance { get; set; }
         public string Loaded { get; set; }
+        public string Pinned { get; set; }
         public string ProjectLocation { get; set; }
         public string ProjectBasePoint { get; set; }
         public string SurveyPoint { get; set; }
@@ -35,6 +36,7 @@ namespace CoordinatesAudit.ViewModels
                 Model = link.LinkTypeName,
                 Instance = link.InstanceName,
                 Loaded = link.IsLoaded ? "Yes" : "No",
+                Pinned = link.Pinned,
                 ProjectLocation = link.CoordinateReport?.ProjectLocationName ?? "Unavailable",
                 ProjectBasePoint = link.CoordinateReport?.ProjectBasePoint?.InternalPosition ?? "Unavailable",
                 SurveyPoint = link.CoordinateReport?.SurveyPoint?.InternalPosition ?? "Unavailable",
@@ -60,6 +62,7 @@ namespace CoordinatesAudit.ViewModels
                 Model = host.ModelTitle,
                 Instance = "Current Model",
                 Loaded = "Yes",
+                Pinned = "-",
                 ProjectLocation = host.ProjectLocationName,
                 ProjectBasePoint = host.ProjectBasePoint.InternalPosition,
                 SurveyPoint = host.SurveyPoint.InternalPosition,
