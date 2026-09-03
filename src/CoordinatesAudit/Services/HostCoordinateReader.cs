@@ -28,7 +28,9 @@ namespace CoordinatesAudit.Services
                 SharedOriginPosition = FormatPosition(document, new XYZ(sharedOrigin.EastWest, sharedOrigin.NorthSouth, sharedOrigin.Elevation)),
                 ProjectBasePoint = ReadBasePoint(document, projectBasePoint, "Project Base Point"),
                 SurveyPoint = ReadBasePoint(document, surveyPoint, "Survey Point"),
-                InternalOriginPosition = FormatPosition(document, internalOrigin.Position)
+                InternalOriginPosition = FormatPosition(document, internalOrigin.Position),
+                InternalOriginRaw = internalOrigin.Position,
+                AngleToTrueNorthRaw = sharedOrigin.Angle
             };
         }
 
@@ -40,7 +42,8 @@ namespace CoordinatesAudit.Services
                 FormatParameter(document, point.get_Parameter(BuiltInParameter.BASEPOINT_NORTHSOUTH_PARAM), SpecTypeId.Length, point.Position.Y),
                 FormatParameter(document, point.get_Parameter(BuiltInParameter.BASEPOINT_ELEVATION_PARAM), SpecTypeId.Length, point.Position.Z),
                 FormatPosition(document, point.Position),
-                point.Pinned);
+                point.Pinned,
+                point.Position);
         }
 
         private static string FormatParameter(Document document, Parameter parameter, ForgeTypeId specTypeId, double fallbackValue)
