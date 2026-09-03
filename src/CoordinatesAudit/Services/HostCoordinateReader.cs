@@ -36,20 +36,26 @@ namespace CoordinatesAudit.Services
         {
             return new CoordinatePointData(
                 name,
-                FormatParameter(document, point.get_Parameter(BuiltInParameter.BASEPOINT_EASTWEST_PARAM), SpecTypeId.Length),
-                FormatParameter(document, point.get_Parameter(BuiltInParameter.BASEPOINT_NORTHSOUTH_PARAM), SpecTypeId.Length),
-                FormatParameter(document, point.get_Parameter(BuiltInParameter.BASEPOINT_ELEVATION_PARAM), SpecTypeId.Length),
+                FormatParameter(document, point.get_Parameter(BuiltInParameter.BASEPOINT_EASTWEST_PARAM), SpecTypeId.Length, point.Position.X),
+                FormatParameter(document, point.get_Parameter(BuiltInParameter.BASEPOINT_NORTHSOUTH_PARAM), SpecTypeId.Length, point.Position.Y),
+                FormatParameter(document, point.get_Parameter(BuiltInParameter.BASEPOINT_ELEVATION_PARAM), SpecTypeId.Length, point.Position.Z),
                 FormatPosition(document, point.Position),
                 point.Pinned);
         }
 
-        private static string FormatParameter(Document document, Parameter parameter, ForgeTypeId specTypeId)
+        private static string FormatParameter(Document document, Parameter parameter, ForgeTypeId specTypeId, double fallbackValue)
         {
-            if (parameter == null || !parameter.HasValue) return "Unavailable";
-            string displayed = parameter.AsValueString();
-            return string.IsNullOrWhiteSpace(displayed)
-                ? UnitFormatUtils.Format(document.GetUnits(), specTypeId, parameter.AsDouble(), false)
-                : displayed;
+            if (parameter != null && parameter.StorageType == StorageType.Double && parameter.HasValue)
+            {
+                string displayed = parameter.AsValueString();
+                return string.IsNullOrWhiteSpace(displayed)
+                    ? UnitFormatUtils.Format(document.GetUnits(), specTypeId, parameter.AsDouble(), false)
+                    : displayed;
+            }
+
+            // In Revit 2024, Project Base Point offset parameters can report HasValue=false
+            // even though BasePoint.Position contains the valid internal-coordinate offset.
+            return UnitFormatUtils.Format(document.GetUnits(), specTypeId, fallbackValue, false);
         }
 
         private static string FormatPosition(Document document, XYZ position)
