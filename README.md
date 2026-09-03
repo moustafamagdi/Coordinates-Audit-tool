@@ -30,6 +30,20 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 - CSV export from the current comparison, including audit metadata, reference,
   tolerances, link information, numeric deltas, result reasons, and transforms.
 - UTF-8 BOM output for reliable Excel handling of Unicode model names and paths.
+
+## Default audit logic
+
+The default mode audits shared-coordinate alignment:
+
+- `PASS`: shared position, elevation, rotation, unit scale, and mirroring checks pass.
+- `PASS` with `INFO`: the shared-coordinate checks pass while PBP or Internal Origin differs.
+- `WARNING`: shared coordinates pass but the link instance is not pinned.
+- `FAIL`: shared position/elevation or rotation exceeds tolerance, scale is not 1.0,
+  or the link is mirrored.
+- `UNAVAILABLE`: the link document or required data cannot be read.
+
+Project Base Point and Internal Origin differences remain visible but do not fail
+the default audit because they may legitimately differ between discipline models.
 - PowerShell development install and uninstall scripts.
 - Unloaded, missing, and inaccessible link documents remain visible with an explicit
   coordinate-read status instead of failing the complete audit.
