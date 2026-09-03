@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using Microsoft.Win32;
 using CoordinatesAudit.Models;
 using CoordinatesAudit.Services;
@@ -19,6 +20,8 @@ namespace CoordinatesAudit.Views
         private readonly ObservableCollection<AuditRowViewModel> _rows = new ObservableCollection<AuditRowViewModel>();
         private readonly CoordinateComparisonEngine _comparisonEngine = new CoordinateComparisonEngine();
         private readonly CsvAuditExporter _csvExporter = new CsvAuditExporter();
+        private readonly DispatcherTimer _autoRunTimer;
+        private bool _isInitialized;
         private ReferenceModelOption _lastReference;
         private double _lastHorizontalTolerance;
         private double _lastVerticalTolerance;
@@ -26,13 +29,20 @@ namespace CoordinatesAudit.Views
 
         public AuditWindow(HostCoordinateReport host, IReadOnlyList<LinkInstanceData> links)
         {
+            _autoRunTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(350) };
+            _autoRunTimer.Tick += AutoRunTimer_Tick;
             InitializeComponent();
             _host = host;
             _links = links;
             ResultsGrid.ItemsSource = _rows;
             ProjectSummaryText.Text = $"{host.ModelTitle}  |  {host.ProjectLocationName}  |  {host.LengthUnit}";
+            HostLocationText.Text = host.ProjectLocationName + "  |  True North " + host.AngleToTrueNorth;
+            HostProjectBasePointText.Text = host.ProjectBasePoint.InternalPosition;
+            HostSurveyPointText.Text = host.SurveyPoint.InternalPosition;
+            HostInternalOriginText.Text = host.InternalOriginPosition;
             ReferenceComboBox.ItemsSource = BuildReferenceOptions();
             ReferenceComboBox.SelectedIndex = 0;
+            _isInitialized = true;
             RunComparison();
         }
 
@@ -63,14 +73,34 @@ namespace CoordinatesAudit.Views
             return options;
         }
 
-        private void RunComparison_Click(object sender, RoutedEventArgs e) => RunComparison();
+        private void ReferenceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => ScheduleComparison();
+
+        private void ToleranceTextBox_TextChanged(object sender, TextChangedEventArgs e) => ScheduleComparison();
+
+        private void ScheduleComparison()
+        {
+            if (!_isInitialized) return;
+            _autoRunTimer.Stop();
+            _autoRunTimer.Start();
+        }
+
+        private void AutoRunTimer_Tick(object sender, EventArgs e)
+        {
+            _autoRunTimer.Stop();
+            RunComparison();
+        }
 
         private void RunComparison()
         {
             if (!(ReferenceComboBox.SelectedItem is ReferenceModelOption reference)) return;
-            if (!TryReadTolerance(HorizontalToleranceTextBox.Text, "horizontal", out double horizontal) ||
-                !TryReadTolerance(VerticalToleranceTextBox.Text, "vertical", out double vertical) ||
-                !TryReadTolerance(AngularToleranceTextBox.Text, "rotation", out double angular)) return;
+            if (!TryReadTolerance(HorizontalToleranceTextBox.Text, out double horizontal) ||
+                !TryReadTolerance(VerticalToleranceTextBox.Text, out double vertical) ||
+                !TryReadTolerance(AngularToleranceTextBox.Text, out double angular))
+            {
+                InputValidationText.Text = "Enter non-negative tolerance values.";
+                return;
+            }
+            InputValidationText.Text = string.Empty;
 
             _lastReference = reference;
             _lastHorizontalTolerance = horizontal;
@@ -136,16 +166,11 @@ namespace CoordinatesAudit.Views
             return value;
         }
 
-        private static bool TryReadTolerance(string text, string name, out double value)
+        private static bool TryReadTolerance(string text, out double value)
         {
             bool valid = double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out value) ||
                          double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
-            if (!valid || value < 0.0)
-            {
-                MessageBox.Show($"Enter a non-negative number for the {name} tolerance.", "Coordinate Auditor", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            return true;
+            return valid && value >= 0.0;
         }
 
         private void ResultsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
