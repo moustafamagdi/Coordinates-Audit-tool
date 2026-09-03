@@ -29,6 +29,7 @@ namespace CoordinatesAudit.Services
             var coordinateReportsByType = new Dictionary<ElementId, HostCoordinateReport>();
             var coordinateErrorsByType = new Dictionary<ElementId, string>();
             var coordinateReader = new HostCoordinateReader();
+            var transformReader = new LinkTransformReader();
             foreach (RevitLinkType linkType in types)
             {
                 string path = GetExternalPath(document, linkType.Id);
@@ -47,6 +48,8 @@ namespace CoordinatesAudit.Services
                     Document linkedDocument = instance.GetLinkDocument();
                     HostCoordinateReport coordinateReport = null;
                     string coordinateReadStatus;
+                    LinkTransformData transformData = null;
+                    string transformReadStatus;
 
                     if (!isLoaded || linkedDocument == null)
                     {
@@ -75,6 +78,23 @@ namespace CoordinatesAudit.Services
                         }
                     }
 
+                    if (!isLoaded || linkedDocument == null)
+                    {
+                        transformReadStatus = "Unavailable: link document is not loaded";
+                    }
+                    else
+                    {
+                        try
+                        {
+                            transformData = transformReader.Read(document, instance, linkedDocument);
+                            transformReadStatus = "Available";
+                        }
+                        catch (Exception exception)
+                        {
+                            transformReadStatus = "Unavailable: " + exception.Message;
+                        }
+                    }
+
                     results.Add(new LinkInstanceData
                     {
                         LinkTypeName = linkType.Name,
@@ -90,7 +110,9 @@ namespace CoordinatesAudit.Services
                         IsLoaded = isLoaded && instance.GetLinkDocument() != null,
                         HasInstance = true,
                         CoordinateReadStatus = coordinateReadStatus,
-                        CoordinateReport = coordinateReport
+                        CoordinateReport = coordinateReport,
+                        TransformReadStatus = transformReadStatus,
+                        TransformData = transformData
                     });
                 }
             }
@@ -115,7 +137,9 @@ namespace CoordinatesAudit.Services
                 IsLoaded = isLoaded,
                 HasInstance = false,
                 CoordinateReadStatus = "Unavailable: no placed instance",
-                CoordinateReport = null
+                CoordinateReport = null,
+                TransformReadStatus = "Unavailable: no placed instance",
+                TransformData = null
             };
         }
 
