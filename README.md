@@ -4,13 +4,14 @@ Read-only Autodesk Revit 2024 add-in for auditing model coordinates and linked-m
 
 ## Current milestone
 
-**M0 - Add-in Foundation**
+**M1 - Host Coordinate Reader**
 
 - Revit 2024 project targeting .NET Framework 4.8.
 - `Coordinate Auditor` ribbon panel and `Open Auditor` command.
-- Safe placeholder command confirming the add-in loaded successfully.
+- Read-only reporting for the active project's Project Base Point, Survey Point,
+  Internal Origin, active Project Location, True North angle, and project units.
 - PowerShell development install and uninstall scripts.
-- No coordinate-reading or model-modifying behavior yet.
+- No linked-model reading or model-modifying behavior yet.
 
 ## Requirements
 
@@ -57,7 +58,7 @@ The development installation is placed under:
 
 ## Safety
 
-M0 is read-only. It opens no Revit transaction and changes no document data.
+M1 is read-only. It opens no Revit transaction and changes no document data.
 
 ## License
 
