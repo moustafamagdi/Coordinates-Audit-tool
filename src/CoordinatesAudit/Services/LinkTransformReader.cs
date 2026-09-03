@@ -22,6 +22,10 @@ namespace CoordinatesAudit.Services
             XYZ projectBasePointInHost = totalTransform.OfPoint(projectBasePoint.Position);
             XYZ surveyPointInHost = totalTransform.OfPoint(surveyPoint.Position);
             double totalRotation = GetZRotation(totalTransform);
+            double scaleX = totalTransform.BasisX.GetLength();
+            double scaleY = totalTransform.BasisY.GetLength();
+            double scaleZ = totalTransform.BasisZ.GetLength();
+            bool isMirrored = totalTransform.Determinant < 0.0;
 
             return new LinkTransformData
             {
@@ -30,14 +34,18 @@ namespace CoordinatesAudit.Services
                 TotalTranslation = FormatPoint(hostDocument, totalTransform.Origin),
                 TotalRotation = FormatAngle(hostDocument, totalRotation),
                 Scale = GetScaleDescription(totalTransform),
-                Mirrored = totalTransform.Determinant < 0.0 ? "Yes" : "No",
+                Mirrored = isMirrored ? "Yes" : "No",
                 LinkedInternalOriginInHost = FormatPoint(hostDocument, internalOriginInHost),
                 LinkedProjectBasePointInHost = FormatPoint(hostDocument, projectBasePointInHost),
                 LinkedSurveyPointInHost = FormatPoint(hostDocument, surveyPointInHost),
                 LinkedInternalOriginInHostRaw = internalOriginInHost,
                 LinkedProjectBasePointInHostRaw = projectBasePointInHost,
                 LinkedSurveyPointInHostRaw = surveyPointInHost,
-                TotalRotationRadians = totalRotation
+                TotalRotationRadians = totalRotation,
+                ScaleX = scaleX,
+                ScaleY = scaleY,
+                ScaleZ = scaleZ,
+                IsMirrored = isMirrored
             };
         }
 
