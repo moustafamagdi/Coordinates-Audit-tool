@@ -17,5 +17,9 @@ namespace CoordinatesAudit.Models
         public XYZ LinkedProjectBasePointInHostRaw { get; set; }
         public XYZ LinkedSurveyPointInHostRaw { get; set; }
         public double TotalRotationRadians { get; set; }
+        public double ScaleX { get; set; }
+        public double ScaleY { get; set; }
+        public double ScaleZ { get; set; }
+        public bool IsMirrored { get; set; }
     }
 }
