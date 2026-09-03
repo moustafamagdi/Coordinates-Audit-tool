@@ -18,18 +18,26 @@ namespace CoordinatesAudit.Services
             BasePoint projectBasePoint = BasePoint.GetProjectBasePoint(linkedDocument);
             BasePoint surveyPoint = BasePoint.GetSurveyPoint(linkedDocument);
             InternalOrigin internalOrigin = InternalOrigin.Get(linkedDocument);
+            XYZ internalOriginInHost = totalTransform.OfPoint(internalOrigin.Position);
+            XYZ projectBasePointInHost = totalTransform.OfPoint(projectBasePoint.Position);
+            XYZ surveyPointInHost = totalTransform.OfPoint(surveyPoint.Position);
+            double totalRotation = GetZRotation(totalTransform);
 
             return new LinkTransformData
             {
                 InstanceTranslation = FormatPoint(hostDocument, instanceTransform.Origin),
                 InstanceRotation = FormatAngle(hostDocument, GetZRotation(instanceTransform)),
                 TotalTranslation = FormatPoint(hostDocument, totalTransform.Origin),
-                TotalRotation = FormatAngle(hostDocument, GetZRotation(totalTransform)),
+                TotalRotation = FormatAngle(hostDocument, totalRotation),
                 Scale = GetScaleDescription(totalTransform),
                 Mirrored = totalTransform.Determinant < 0.0 ? "Yes" : "No",
-                LinkedInternalOriginInHost = FormatPoint(hostDocument, totalTransform.OfPoint(internalOrigin.Position)),
-                LinkedProjectBasePointInHost = FormatPoint(hostDocument, totalTransform.OfPoint(projectBasePoint.Position)),
-                LinkedSurveyPointInHost = FormatPoint(hostDocument, totalTransform.OfPoint(surveyPoint.Position))
+                LinkedInternalOriginInHost = FormatPoint(hostDocument, internalOriginInHost),
+                LinkedProjectBasePointInHost = FormatPoint(hostDocument, projectBasePointInHost),
+                LinkedSurveyPointInHost = FormatPoint(hostDocument, surveyPointInHost),
+                LinkedInternalOriginInHostRaw = internalOriginInHost,
+                LinkedProjectBasePointInHostRaw = projectBasePointInHost,
+                LinkedSurveyPointInHostRaw = surveyPointInHost,
+                TotalRotationRadians = totalRotation
             };
         }
 
